@@ -1,11 +1,21 @@
-div{
-    background-color: blue;
+
+@function setcolor(){
+    @return red;
+}
+.first{
+    background-color: setcolor();
     color:rgb(255, 217, 0);
     font-size: 50px;
    
 }
 
+.second{
+    background-color: setcolor();
+}
 .box {
     background-color: yellow;
     // it is my description
+}
+@for $i from 5 through 12{
+    .cox-lg-#{$i} {width: $i;}
 }

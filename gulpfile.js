@@ -9,8 +9,22 @@ const autoprefixer = require('gulp-autoprefixer');
 // Подключаем модуль gulp-clean-css
 const cleancss = require('gulp-clean-css');
 const concat = require('gulp-concat');
+// Подключаем gulp-imagemin для работы с изображениями
+const imagemin = require('gulp-imagemin');
+// Подключаем модуль gulp-newer
+const newer = require('gulp-newer');
+// Подключаем модуль del
+const del = require('del');
 
 
+function images() {
+    return src('app/images/src/**/*')
+    .pipe(newer('app/images/dest/'))
+    .pipe(imagemin())
+    .pipe(dest('app/images/dest/'))
+    }
+    
+    
 
 function styles() {
  return src('app/' + 'scss' + '/style.' + 'scss' + '')
@@ -39,8 +53,27 @@ function browsersync() {
     watch('app/**/*.html').on('change',browserSync.reload);
    }
 
+   function cleanimg() {
+    return del('app/images/dest/**/*', { force: true })
+    }
+    function cleandist(){
+        return del('dist/**/*',{force: true})
+    }
+    function buildcopy (){
+        return src([
+        'app/images/dest/**/*',
+        'app/css/*.min.css',
+        'app/**/*.html',
 
+        ],{base:'app'})
+        .pipe(dest('dist'))
+    }
 
+   exports.cleanimg = cleanimg;
+   exports.images = images;
    exports.styles = styles;
    exports.browsersync = browsersync;
-   exports.default = parallel(browsersync,startWatch);
+   exports.cleandist = cleandist
+
+exports.build = series(cleanimg,styles,images,buildcopy,cleandist);
+exports.default = parallel(browsersync,startWatch);
